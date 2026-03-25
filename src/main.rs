@@ -16,8 +16,21 @@ impl eframe::App for PixelArtApp{
         egui::SidePanel::left("toolbox_panel").show(ctx, |ui| {
             ui.heading("ToolBox");
 
-            // TODO: Add the color picker for `self.current_color` here.
-            // TODO: Add the "Clear Canvas" button here.
+            ui.add_space(10.0);
+            ui.separator();
+
+            ui.label(
+                egui::RichText::new("Color Picker").strong()
+            );
+            ui.color_edit_button_srgba(&mut self.current_color);  
+            
+            if ui.button("Clear Canvas").clicked(){
+                self.pixels = [[egui::Color32::LIGHT_GRAY; 8]; 8];
+            }
+
+            if ui.button("Eraser").clicked(){
+                self.current_color = egui::Color32::LIGHT_GRAY;
+            }
         });
 
 
@@ -25,7 +38,24 @@ impl eframe::App for PixelArtApp{
               ui.heading("Your Canvas");
 
 
-            // TODO: Use two `for` loops to draw the 8x8 grid of buttons here.
+            for y in 0..8{
+                ui.horizontal(|ui|{
+                    for x in 0..8{
+                        let pixel_color = self.pixels[y][x];
+
+                        let button = egui::Button::new("")
+                        .fill(pixel_color)
+                        .min_size(egui::Vec2 { x: 32.0, y: 32.0 });
+
+                        if ui.add(button).clicked(){
+                            self.pixels[y][x] = self.current_color;
+                        }
+
+                    }
+
+                });
+            }
+
         });
     }
 }
